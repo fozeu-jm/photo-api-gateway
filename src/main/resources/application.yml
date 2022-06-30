@@ -29,29 +29,29 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - AuthorizationHeaderFilter
-        #another route
-        - id: users-ms
-            uri: lb://user-ms
-            predicates:
-              - Path=user-ms/api/users
-              - Method=POST
-            filters:
-              - RemoveRequestHeader=Cookie
-        #another route
+        - id: user-ms
+          uri: lb://user-ms
+          predicates:
+            - Path=user-ms/api/users
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
         - id: users-ms-login
-            uri: lb://user-ms
-            predicates:
-              - Path=user-ms/api/auth
-              - Method=GET
-            filters:
-              - RemoveRequestHeader=Cookie
-        #another route
+          uri: lb://user-ms
+          predicates:
+            - Path=user-ms/api/auth
+            - Method=GET
+          filters:
+            - RemoveRequestHeader=Cookie
         - id: users-ms-get-update-delete
-            uri: lb://user-ms
-            predicates:
-              - Path=/api/users/**
-              - Method=GET,PUT,DELETE
-              - Header=Authorization, Bearer (.*)
-            filters:
-              - RemoveRequestHeader=Cookie
-              - AuthorizationHeaderFilter
+          uri: lb://user-ms
+          predicates:
+            - Path=/api/users/**
+            - Method=GET,PUT,DELETE
+            - Header=Authorization, Bearer (.*)
+          filters:
+            - RemoveRequestHeader=Cookie
+            - AuthorizationHeaderFilter
+
+token:
+  secret: Zuu-^@?eEpx@pg8j%Dj3W6rAEZm@44=JgcWJE$3pn_eUjA2s
