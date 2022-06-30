@@ -15,6 +15,10 @@ spring:
     name: api-gateway
   cloud:
     gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
       routes:
         - id: users-status-check
           uri: lb://user-ms
@@ -24,7 +28,30 @@ spring:
             - Header=Authorization, Bearer (.*)
           filters:
             - RemoveRequestHeader=Cookie
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
+            - AuthorizationHeaderFilter
+        #another route
+        - id: users-ms
+            uri: lb://user-ms
+            predicates:
+              - Path=user-ms/api/users
+              - Method=POST
+            filters:
+              - RemoveRequestHeader=Cookie
+        #another route
+        - id: users-ms-login
+            uri: lb://user-ms
+            predicates:
+              - Path=user-ms/api/auth
+              - Method=GET
+            filters:
+              - RemoveRequestHeader=Cookie
+        #another route
+        - id: users-ms-get-update-delete
+            uri: lb://user-ms
+            predicates:
+              - Path=/api/users/**
+              - Method=GET,PUT,DELETE
+              - Header=Authorization, Bearer (.*)
+            filters:
+              - RemoveRequestHeader=Cookie
+              - AuthorizationHeaderFilter
