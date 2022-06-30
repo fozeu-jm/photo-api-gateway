@@ -31,14 +31,13 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
     @Override
     public GatewayFilter apply(Config config) {
         return ((exchange, chain) -> {
-
             ServerHttpRequest req = exchange.getRequest();
-            if (req.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
+            if (!req.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
                 return onError(exchange, "No Authorization header", HttpStatus.UNAUTHORIZED);
             }
             String authorizationHeader = Objects.requireNonNull(req.getHeaders().get(HttpHeaders.AUTHORIZATION)).get(0);
             String jwt = authorizationHeader.replace("Bearer", "");
-            if(isJwtValid(jwt)){
+            if(!isJwtValid(jwt)){
                 return onError(exchange, "Invalid JWT token !", HttpStatus.UNAUTHORIZED);
             }
 
