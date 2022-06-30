@@ -17,11 +17,13 @@ import java.util.Objects;
 
 @Component
 public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<AuthorizationHeaderFilter.Config> {
-    @Autowired
-    Environment env;
 
-    public AuthorizationHeaderFilter() {
+    final Environment env;
+
+    @Autowired
+    public AuthorizationHeaderFilter(Environment env) {
         super(Config.class);
+        this.env = env;
     }
 
     public static class Config {
