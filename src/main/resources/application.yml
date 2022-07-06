@@ -41,7 +41,7 @@ spring:
           uri: lb://user-ms
           predicates:
             - Path=/user-ms/api/auth
-            - Method=GET
+            - Method=POST
           filters:
             - RemoveRequestHeader=Cookie
 
