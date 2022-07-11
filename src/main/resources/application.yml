@@ -11,32 +11,45 @@ eureka:
     prefer-ip-address: true
 
 spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
   application:
     name: api-gateway
   cloud:
     gateway:
       discovery:
         locator:
-          enabled: true
           lower-case-service-id: true
       routes:
         - id: users-status-check
           uri: lb://user-ms
           predicates:
-            - Path=/api/users/status/check
+            - Path=/user-ms/api/users/status/check
             - Method=GET
           filters:
             - RemoveRequestHeader=Cookie
+            - RewritePath=/user-ms/(?<segment>.*), /$\{segment}
             - AuthorizationHeaderFilter
-
-        - id: user-ms
+        - id: save-photo
+          uri: lb://photo-ms
+          predicates:
+            - Path=/photo-ms/photo
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/photo-ms/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+        - id: user-ms-signup
           uri: lb://user-ms
           predicates:
             - Path=/user-ms/api/users
             - Method=POST
           filters:
             - RemoveRequestHeader=Cookie
-
+            - RewritePath=/user-ms/(?<segment>.*), /$\{segment}
         - id: users-ms-login
           uri: lb://user-ms
           predicates:
@@ -44,6 +57,7 @@ spring:
             - Method=POST
           filters:
             - RemoveRequestHeader=Cookie
+            - RewritePath=/user-ms/(?<segment>.*), /$\{segment}
 
         - id: users-ms-get-update-delete
           uri: lb://user-ms
@@ -53,7 +67,21 @@ spring:
             - Header=Authorization, Bearer (.*)
           filters:
             - RemoveRequestHeader=Cookie
+            - RewritePath=/user-ms/(?<segment>.*), /$\{segment}
             - AuthorizationHeaderFilter
-
+        - id: get-user-photo
+          uri: lb://photo-ms
+          predicates:
+            - Path=/photo-ms/photo/**
+            - Method=GET
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/photo-ms/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
 token:
   secret: Zuu-^@?eEpx@pg8j%Dj3W6rAEZm@44=JgcWJE$3pn_eUjA2s
+management:
+  endpoints:
+    web:
+      exposure:
+        include: beans,health,routes,httptrace,gateway
