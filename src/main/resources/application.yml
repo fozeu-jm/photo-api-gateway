@@ -78,6 +78,14 @@ spring:
             - RemoveRequestHeader=Cookie
             - RewritePath=/photo-ms/(?<segment>.*), /$\{segment}
             - AuthorizationHeaderFilter
+        - id: user-ms-actuator
+          uri: lb://user-ms
+          predicates:
+            - Path=/user-ms/actuator/**
+            - Method=GET
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-ms/(?<segment>.*), /$\{segment}
 token:
   secret: Zuu-^@?eEpx@pg8j%Dj3W6rAEZm@44=JgcWJE$3pn_eUjA2s
 management:
